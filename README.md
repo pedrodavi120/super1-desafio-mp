@@ -70,4 +70,4 @@ Execute os seguintes comandos no terminal, na raiz do projeto:
 
 ## **Vídeo de Apresentação (Demo)**
 
-[**\>\> Inserir o link para o seu vídeo de demo aqui \<\<**](https://www.youtube.com/)
+[**\>\> Link do vídeo da apresentação \<\<**](https://www.youtube.com/)
