@@ -1,4 +1,4 @@
-# **Mini Marketplace de Serviços (Versão Completa)**
+# **Mini Marketplace de Serviços (Versão com todas as funcionalidades obrigatórias e extras)**
 
 Este é um sistema de marketplace de serviços para profissionais liberais, construído como parte da Atividade Super1 FullStack. O projeto permite que prestadores de serviços se cadastrem, criem serviços, definam agendas e sejam contratados por clientes.
 
