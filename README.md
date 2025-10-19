@@ -68,6 +68,6 @@ Execute os seguintes comandos no terminal, na raiz do projeto:
   * **Email**: carlos@example.com  
   * **Senha**: password123
 
-## **Print da Interface (Demo)**
+## **Print da Interface (Demo sem vídeo teve problema de conexão do frontend em alguns elementos do Marketplace)**
 
 <img src="./print.jpg" alt="Logo da Minha Empresa">
