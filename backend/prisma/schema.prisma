@@ -1,0 +1,160 @@
+// FILE: backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  // CORREÇÃO: Usamos uma versão mais moderna do OpenSSL
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ... o resto do seu schema permanece exatamente igual ...
+
+model Prestador {
+  id                 String              @id @default(uuid())
+  nome               String
+  email              String              @unique
+  senhaHash          String              @map("senha_hash")
+  cidade             String?
+  bairro             String?
+  createdAt          DateTime            @default(now()) @map("created_at")
+  servicos           Servico[]
+  disponibilidades   Disponibilidade[]
+  avaliacoes         Avaliacao[]
+  conversasPrestador Conversa[]          @relation("PrestadorConversa")
+  mensagensEnviadas  Mensagem[]          @relation("MensagensPrestador")
+
+  @@map("prestadores")
+}
+
+model Cliente {
+  id                String        @id @default(uuid())
+  nome              String
+  email             String        @unique
+  senhaHash         String        @map("senha_hash")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  contratacoes      Contratacao[]
+  avaliacoes        Avaliacao[]
+  conversas         Conversa[]    @relation("ClienteConversa")
+  mensagensEnviadas Mensagem[]    @relation("MensagensCliente")
+
+  @@map("clientes")
+}
+
+model TipoServico {
+  id       Int       @id @default(autoincrement())
+  nome     String    @unique
+  servicos Servico[]
+
+  @@map("tipos_servico")
+}
+
+model Servico {
+  id               String            @id @default(uuid())
+  prestadorId      String            @map("prestador_id")
+  tipoServicoId    Int               @map("tipo_servico_id")
+  nome             String
+  descricao        String
+  prestador        Prestador         @relation(fields: [prestadorId], references: [id])
+  tipoServico      TipoServico       @relation(fields: [tipoServicoId], references: [id])
+  variacoesServico VariacaoServico[]
+  avaliacoes       Avaliacao[]
+  descontos        Desconto[]
+
+  @@map("servicos")
+}
+
+model VariacaoServico {
+  id             String        @id @default(uuid())
+  servicoId      String        @map("servico_id")
+  nome           String
+  preco          Float
+  duracao        Int
+  unidadeDuracao String        @default("MINUTOS")
+  servico        Servico       @relation(fields: [servicoId], references: [id], onDelete: Cascade)
+  contratacoes   Contratacao[]
+
+  @@map("variacoes_servico")
+}
+
+model Disponibilidade {
+  id          Int       @id @default(autoincrement())
+  prestadorId String    @map("prestador_id")
+  diaSemana   Int       @map("dia_semana")
+  horaInicio  String    @map("hora_inicio")
+  horaFim     String    @map("hora_fim")
+  prestador   Prestador @relation(fields: [prestadorId], references: [id])
+
+  @@map("disponibilidade")
+}
+
+model Contratacao {
+  id             String          @id @default(uuid())
+  clienteId      String          @map("cliente_id")
+  variacaoId     String          @map("variacao_id")
+  dataHoraInicio DateTime        @map("data_hora_inicio")
+  dataHoraFim    DateTime        @map("data_hora_fim")
+  precoFinal     Float           @map("preco_final")
+  status         String
+  cliente        Cliente         @relation(fields: [clienteId], references: [id])
+  variacao       VariacaoServico @relation(fields: [variacaoId], references: [id])
+  avaliacao      Avaliacao?
+
+  @@map("contratacoes")
+}
+
+model Avaliacao {
+  id            String      @id @default(uuid())
+  contratacaoId String      @unique @map("contratacao_id")
+  clienteId     String      @map("cliente_id")
+  prestadorId   String      @map("prestador_id")
+  servicoId     String      @map("servico_id")
+  nota          Int
+  comentario    String?
+  createdAt     DateTime    @default(now()) @map("created_at")
+  contratacao   Contratacao @relation(fields: [contratacaoId], references: [id])
+  cliente       Cliente     @relation(fields: [clienteId], references: [id])
+  prestador     Prestador   @relation(fields: [prestadorId], references: [id])
+  servico       Servico     @relation(fields: [servicoId], references: [id])
+
+  @@map("avaliacoes")
+}
+
+model Desconto {
+  id         Int     @id @default(autoincrement())
+  servicoId  String  @map("servico_id")
+  diaSemana  Int     @map("dia_semana")
+  percentual Float
+  servico    Servico @relation(fields: [servicoId], references: [id])
+
+  @@map("descontos")
+}
+
+model Conversa {
+  id          String     @id @default(uuid())
+  clienteId   String     @map("cliente_id")
+  prestadorId String     @map("prestador_id")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  cliente     Cliente    @relation("ClienteConversa", fields: [clienteId], references: [id])
+  prestador   Prestador  @relation("PrestadorConversa", fields: [prestadorId], references: [id])
+  mensagens   Mensagem[]
+
+  @@map("conversas")
+}
+
+model Mensagem {
+  id                   String     @id @default(uuid())
+  conversaId           String     @map("conversa_id")
+  conteudo             String
+  createdAt            DateTime   @default(now()) @map("created_at")
+  conversa             Conversa   @relation(fields: [conversaId], references: [id])
+  remetenteClienteId   String?    @map("remetente_cliente_id")
+  remetentePrestadorId String?    @map("remetente_prestador_id")
+  remetenteCliente     Cliente?   @relation("MensagensCliente", fields: [remetenteClienteId], references: [id])
+  remetentePrestador   Prestador? @relation("MensagensPrestador", fields: [remetentePrestadorId], references: [id])
+
+  @@map("mensagens")
+}

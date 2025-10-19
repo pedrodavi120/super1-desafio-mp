@@ -1,0 +1,34 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts",
+    "start": "bun src/index.ts",
+    "prisma:migrate": "bunx prisma migrate dev",
+    "prisma:studio": "bunx prisma studio",
+    "postinstall": "bunx prisma generate"
+  },
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.11.0",
+    "@elysiajs/cors": "latest",
+    "@elysiajs/jwt": "latest",
+    "@elysiajs/static": "latest",
+    "@elysiajs/swagger": "latest",
+    "@elysiajs/websocket": "latest",
+    "@prisma/client": "^5.15.0",
+    "bcryptjs": "^2.4.3",
+    "elysia": "latest",
+    "nodemailer": "^6.9.13"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/nodemailer": "^6.4.15",
+    "bun-types": "latest",
+    "prisma": "^5.15.0"
+  },
+  "module": "src/index.js",
+  "prisma": {
+    "seed": "bunx prisma generate && bun run prisma/seed.ts"
+  }
+}
