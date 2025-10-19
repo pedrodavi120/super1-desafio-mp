@@ -68,6 +68,6 @@ Execute os seguintes comandos no terminal, na raiz do projeto:
   * **Email**: carlos@example.com  
   * **Senha**: password123
 
-## **Vídeo de Apresentação (Demo)**
+## **Print da Interface (Demo)**
 
-[**\>\> Não deu para fazer a tempo... \<\<**]
+<img src="./print.jpg" alt="Logo da Minha Empresa">
